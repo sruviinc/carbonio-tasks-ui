@@ -137,7 +137,8 @@ export const ActionsHeader = ({ actions }: ActionsHeaderProps): React.JSX.Elemen
 					flexDirection: 'row',
 					width: '100%',
 					margin: '16px',
-					justifyContent: 'space-evenly',
+					marginTop: '0px',
+					justifyContent: 'space-around',
 					alignItems: 'start'
 				}}
 			>

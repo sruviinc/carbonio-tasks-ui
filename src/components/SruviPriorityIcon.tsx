@@ -8,6 +8,7 @@ import React from 'react';
 import { Icon } from '@zextras/carbonio-design-system';
 
 import { Priority } from '../gql/types';
+import { COMPLETED_PRIORITY_ICON } from '../sruvi/EditedColors';
 
 interface PriorityIconProps {
 	priority: Priority;
@@ -48,8 +49,8 @@ const TaskDone01Icon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export const SruviPriorityIcon = ({ priority }: PriorityIconProps): React.JSX.Element => (
 	<>
-		{priority === Priority.High && <TaskDone01Icon style={{ color: 'green' }} />}
-		{priority === Priority.Low && <TaskDone01Icon style={{ color: 'green' }} />}
-		{priority === Priority.Medium && <TaskDone01Icon style={{ color: 'green' }} />}
+		{priority === Priority.High && <TaskDone01Icon style={{ color: COMPLETED_PRIORITY_ICON }} />}
+		{priority === Priority.Low && <TaskDone01Icon style={{ color: COMPLETED_PRIORITY_ICON }} />}
+		{priority === Priority.Medium && <TaskDone01Icon style={{ color: COMPLETED_PRIORITY_ICON }} />}
 	</>
 );

@@ -17,7 +17,7 @@ export const ROUTES = {
 // misc
 export const LIST_WIDTH = '40%';
 export const DISPLAYER_WIDTH = '60%';
-export const LIST_ITEM_HEIGHT = 'auto';
+export const LIST_ITEM_HEIGHT = '10rem';
 export const ALL_DAY_DATE_TIME_PICKER_DATE_FORMAT = 'PPP';
 export const TIME_SPECIFIC_DATE_TIME_PICKER_DATE_FORMAT = 'PPPp';
 export const RANDOM_PLACEHOLDER_TIMEOUT = 250;

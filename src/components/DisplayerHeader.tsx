@@ -10,19 +10,27 @@ import { Container, Divider, Icon } from '@zextras/carbonio-design-system';
 import { Text } from './Text';
 import { Status } from '../gql/types';
 import { useActiveItem } from '../hooks/useActiveItem';
-import { Grid2, Typography, IconButton, Grid } from '@mui/material';
+import { Grid2, Typography, IconButton, Grid, Paper } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { BACKGROUND_HEADER_COLOR, PRIMARY_ICON_COLOR_ACTIVE } from '../sruvi/EditedColors';
+import { ArrowBack } from '@mui/icons-material';
 
 interface DisplayerHeaderProps {
 	title: string;
 	status: Status;
+	hello: (value: boolean) => void;
 }
 
-export const DisplayerHeader = ({ title, status }: DisplayerHeaderProps): React.JSX.Element => {
+export const DisplayerHeader = ({
+	title,
+	status,
+	hello
+}: DisplayerHeaderProps): React.JSX.Element => {
 	const { removeActive } = useActiveItem();
 
 	const closeDisplayer = useCallback(() => {
 		removeActive();
+		hello(true);
 	}, [removeActive]);
 
 	return (
@@ -48,39 +56,43 @@ export const DisplayerHeader = ({ title, status }: DisplayerHeaderProps): React.
 		// 	<Divider color={'gray3'} />
 		// </Container>
 
-		<div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-			<div style={{ padding: '8px', maxWidth: '100%', display: 'flex', flexDirection: 'column' }}>
+		<div
+			style={{
+				display: 'flex',
+				width: '100%',
+				flexDirection: 'column',
+				position: 'sticky',
+				top: '0',
+				left: '0',
+				backgroundColor: BACKGROUND_HEADER_COLOR,
+				zIndex: 4
+			}}
+		>
+			<div style={{ maxWidth: '100%', display: 'flex', flexDirection: 'column' }}>
 				<div
 					style={{
 						display: 'flex',
 						flexDirection: 'row',
 						alignItems: 'flex-start',
-						padding: '16px'
+						padding: '16px',
+						backgroundColor: BACKGROUND_HEADER_COLOR
 					}}
 				>
-					<div style={{ width: '80%', display: 'flex' }}>
+					<div
+						style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+					>
+						<IconButton onClick={closeDisplayer} style={{ marginLeft: '8px' }}>
+							<ArrowBack style={{ color: PRIMARY_ICON_COLOR_ACTIVE }} />
+						</IconButton>
 						<Typography
 							variant="h6"
-							style={{ wordWrap: 'break-word', textJustify: 'inter-character' }}
+							style={{ wordWrap: 'break-word', textJustify: 'inter-character', marginLeft: '8px' }}
 						>
 							Task Details
 						</Typography>
 					</div>
-					<div style={{ width: '20%', display: 'flex', justifyContent: 'flex-end' }}>
-						<IconButton onClick={closeDisplayer}>
-							<CloseRoundedIcon />
-						</IconButton>
-					</div>
 				</div>
 				<Divider color={'gray3'} />
-				<div style={{ padding: '16px' }}>
-					<Text size={'small'} color={'gray1'}>
-						Task title
-					</Text>
-					<Typography variant="h6" style={{ wordWrap: 'break-word', textJustify: 'inter-word' }}>
-						{title}
-					</Typography>
-				</div>
 			</div>
 		</div>
 	);

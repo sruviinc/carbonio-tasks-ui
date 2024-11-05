@@ -17,12 +17,14 @@ import type { Task } from '../gql/types';
 import { useReminder } from '../hooks/useReminder';
 import type { OneOrMany } from '../types/utils';
 import { formatDateFromTimestamp } from '../utils';
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Paper, Typography } from '@mui/material';
 import { Grade } from '@mui/icons-material';
+import { ActionsHeader } from './ActionsHeader';
+import { useActions } from '../hooks/useActions';
 
 type TaskDetailsProps = Pick<
 	Task,
-	'createdAt' | 'priority' | 'reminderAt' | 'reminderAllDay' | 'description'
+	'createdAt' | 'priority' | 'reminderAt' | 'reminderAllDay' | 'description' | 'title'
 >;
 
 const ScrollableContainer = styled(Container)`
@@ -62,7 +64,8 @@ export const TaskDetails = ({
 	priority,
 	reminderAt,
 	reminderAllDay,
-	description
+	description,
+	title
 }: TaskDetailsProps): React.JSX.Element => {
 	const [t, { language }] = useTranslation();
 	const { isExpired } = useReminder(reminderAt, reminderAllDay);
@@ -73,25 +76,47 @@ export const TaskDetails = ({
 	);
 
 	return (
-		<div style={{ display: 'flex', maxHeight: '100%', width: '100%', overflow: 'scroll' }}>
-			<div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-				<Grid container spacing={2} style={{ width: '100%' }}>
-					<Grid item xs={6}>
-						<div style={{ marginLeft: '24px' }}>
-							<Text size={'small'} color={'gray1'}>
-								Creation Date
-							</Text>
-							<Typography variant="body1">{creationDate}</Typography>
+		<div
+			style={{
+				width: '100%',
+				height: '100%',
+
+				display: 'flex',
+				flexDirection: 'column',
+				zIndex: 1
+			}}
+		>
+			<div style={{ margin: '16px' }}>
+				<Paper variant="outlined" style={{ display: 'flex', flexDirection: 'column' }}>
+					<div style={{ padding: '16px' }}>
+						<Text size={'small'} color={'gray1'}>
+							Task title
+						</Text>
+						<Typography variant="h6" style={{ wordWrap: 'break-word', textJustify: 'inter-word' }}>
+							{title}
+						</Typography>
+					</div>
+					<div className="grid grid-cols-2 p-4 w-full">
+						<div>
+							<Typography variant="body1" style={{ color: 'gray' }}>
+								{t('displayer.details.creationDate', 'Creation date')}
+							</Typography>
+							<Typography variant="body2">{creationDate}</Typography>
 						</div>
-					</Grid>
-					<Grid item xs={6}>
-						<div style={{ marginLeft: '24px' }}>
-							<Text size={'small'} color={'gray1'}>
-								Priority
-							</Text>
-							<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+						<div>
+							<Typography variant="body1" style={{ color: 'gray' }}>
+								{t('displayer.details.priority', 'Priority')}
+							</Typography>
+							<div
+								style={{
+									width: '100%',
+									height: '100%',
+									display: 'flex',
+									flexDirection: 'row'
+								}}
+							>
 								<PriorityIcon priority={priority} />
-								<Typography variant="body1" style={{ marginLeft: '8px' }}>
+								<Typography variant="body2">
 									{t('task.priority', {
 										context: priority.toLowerCase(),
 										defaultValue: capitalize(priority)
@@ -99,53 +124,63 @@ export const TaskDetails = ({
 								</Typography>
 							</div>
 						</div>
-					</Grid>
-					<Grid item xs={12}>
-						<div style={{ marginLeft: '24px' }}>
-							<Text size={'small'} color={'gray1'}>
-								Priority
-							</Text>
-							<Typography variant="body1">
-								{reminderAt && (
-									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-										<Reminder
-											reminderAt={reminderAt}
-											reminderAllDay={reminderAllDay}
-											overflow={'break-word'}
-											size={'medium'}
-										/>
-										{isExpired && (
-											<Container
-												height={'fit'}
-												width={'fit'}
-												flexShrink={0}
-												margin={{ left: '8px' }}
-											>
-												<Icon icon={'AlertTriangle'} color={'warning'} />
-											</Container>
-										)}
-									</div>
+					</div>
+					<div style={{ width: '100%', height: '100%', display: 'flex', padding: '16px' }}>
+						{reminderAt && (
+							<>
+								<Typography variant="body1" style={{ color: 'gray' }}>
+									{t('displayer.details.reminder', 'Reminder')}
+								</Typography>
+								<Reminder
+									reminderAt={reminderAt}
+									reminderAllDay={reminderAllDay}
+									overflow={'break-word'}
+									size={'medium'}
+								/>
+								{isExpired && (
+									<Container height={'fit'} width={'fit'} flexShrink={0}>
+										<Icon icon={'AlertTriangle'} color={'warning'} />
+									</Container>
 								)}
-							</Typography>
-						</div>
-					</Grid>
-					<Grid item xs={12} style={{ marginLeft: '16px' }}>
-						<Divider />
-					</Grid>
-
-					<Grid item xs={12}>
-						<div style={{ marginLeft: '24px' }}>
-							<Text size={'small'} color={'gray1'}>
-								Description
-							</Text>
-							<Typography variant="body1">{description}</Typography>
-						</div>
-					</Grid>
-				</Grid>
+							</>
+						)}
+					</div>
+					<div
+						style={{
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
+							padding: '16px'
+						}}
+					>
+						<Typography variant="body2" style={{ color: 'gray' }}>
+							{t('displayer.details.description', 'Description')}
+						</Typography>
+						<Typography variant="body1" style={{ textJustify: 'inter-word', textAlign: 'justify' }}>
+							{description}
+						</Typography>
+					</div>
+				</Paper>
 			</div>
 		</div>
 	);
 };
+
+{
+	/* <div style={{ padding: '16px' }}>
+				<Text size={'small'} color={'gray1'}>
+					Task title
+				</Text>
+				<Typography variant="h6" style={{ wordWrap: 'break-word', textJustify: 'inter-word' }}>
+					{title}
+				</Typography>
+			</div>
+		
+			
+
+			 */
+}
 
 {
 	/* <ScrollableContainer mainAlignment={'flex-start'}>

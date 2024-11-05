@@ -38,6 +38,7 @@ import {
 	TIME_SPECIFIC_DATE_TIME_PICKER_DATE_FORMAT
 } from '../../constants';
 import { Priority } from '../../gql/types';
+import { Divider, TextField } from '@mui/material';
 
 const PrioritySelectionItem = ({
 	icon,
@@ -263,115 +264,166 @@ export const CommonTaskBoard = ({
 	}, [date, descriptionValue, enableReminder, isAllDay, onConfirm, selectedPriority, titleValue]);
 
 	return (
-		<Container
-			crossAlignment={'flex-end'}
-			background={'gray5'}
-			padding={{ horizontal: 'large', bottom: '2.625rem' }}
-			minHeight={'30rem'}
+		// <Container
+		// 	crossAlignment={'flex-end'}
+		// 	background={'gray5'}
+		// 	padding={{ horizontal: 'large', bottom: '2.625rem' }}
+		// 	minHeight={'30rem'}
+		// >
+
+		<div
+			style={{
+				width: '100%',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'space-between'
+			}}
 		>
-			<Padding vertical={'small'}>
+			<div style={{ display: 'flex', justifyContent: 'flex-start', flexDirection: 'column' }}>
+				<div style={{ display: 'flex', flexDirection: 'column', padding: '16px' }}>
+					<Container
+						background={'gray6'}
+						mainAlignment={'flex-start'}
+						crossAlignment={'flex-start'}
+						padding={{ horizontal: 'small', top: 'small' }}
+						gap={'0.5rem'}
+					>
+						<Text weight={'bold'} overflow={'ellipsis'}>
+							{t('board.label.details', 'Details')}
+						</Text>
+						<Container
+							orientation={'horizontal'}
+							height={'fit'}
+							gap={'0.5rem'}
+							crossAlignment={'flex-start'}
+						>
+							<TextField
+								fullWidth
+								size="medium"
+								label={t('board.input.title.label', 'Title*')}
+								value={titleValue}
+								onChange={onTitleChange}
+								error={titleValue.length > TASK_TITLE_MAX_LENGTH}
+								aria-describedby={
+									titleValue.length > TASK_TITLE_MAX_LENGTH
+										? t(
+												'board.input.description.error.label',
+												'Maximum length allowed is 1024 characters'
+											)
+										: undefined
+								}
+							/>
+							<Select
+								items={priorityItems}
+								background={'white'}
+								label={t('board.select.priority.label', 'Priority')}
+								onChange={onPriorityChange}
+								selection={prioritySelection}
+								LabelFactory={CustomSelectLabelFactory}
+								style={{ border: '1px solid lightgray', height: '56px' }}
+							/>
+						</Container>
+						<Switch
+							value={enableReminder}
+							onClick={onClickEnableReminder}
+							label={t('board.switch.enableReminder.label', 'Enable reminder')}
+						/>
+
+						{enableReminder && (
+							<DateTimePicker
+								backgroundColor="transparent"
+								width={'fill'}
+								label={t('board.dateTimePicker.reminder.label', 'Reminder')}
+								defaultValue={date || undefined}
+								includeTime={!isAllDay}
+								onChange={handleChange}
+								dateFormat={
+									isAllDay
+										? ALL_DAY_DATE_TIME_PICKER_DATE_FORMAT
+										: TIME_SPECIFIC_DATE_TIME_PICKER_DATE_FORMAT
+								}
+								hasError={date === null}
+								errorLabel={
+									date === null
+										? t(
+												'board.dateTimePicker.description.error.label',
+												'The reminder option is enabled, set date and time for it or disable the reminder'
+											)
+										: undefined
+								}
+							/>
+						)}
+						{enableReminder && (
+							<Checkbox
+								value={isAllDay}
+								onClick={onClickAllDayCheckbox}
+								label={t(
+									'board.checkbox.allDay.label',
+									'Remind me at every login throughout the day'
+								)}
+							/>
+						)}
+						<Text weight={'bold'}>{t('board.label.description', 'Description')}</Text>
+
+						<TextField
+							fullWidth
+							multiline
+							rows={4}
+							label={t('board.textArea.taskDescription.label', 'Task Description')}
+							value={descriptionValue}
+							onChange={onChangeDescription}
+							error={descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH}
+							aria-describedby={
+								descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH
+									? t(
+											'board.textArea.description.error.label',
+											'Maximum length allowed is 4096 characters'
+										)
+									: undefined
+							}
+						/>
+
+						{/* <TextArea
+							borderColor={'white'}
+							
+							label={t('board.textArea.taskDescription.label', 'Task Description')}
+							value={descriptionValue}
+							onChange={onChangeDescription}
+							hasError={descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH}
+							description={
+								descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH
+									? t(
+											'board.textArea.description.error.label',
+											'Maximum length allowed is 4096 characters'
+										)
+									: undefined
+							}
+						/> */}
+					</Container>
+				</div>
+
+				<div>{banner}</div>
+			</div>
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'flex-start',
+					padding: '16px',
+					width: '100%'
+				}}
+			>
+				<Divider style={{ marginBottom: '8px' }} />
 				<Button
 					disabled={isConfirmDisabled}
 					size={'medium'}
 					label={confirmLabel}
 					onClick={onClickConfirmButton}
 				/>
-			</Padding>
-			{banner}
-			<Container
-				background={'gray6'}
-				mainAlignment={'flex-start'}
-				crossAlignment={'flex-start'}
-				padding={{ horizontal: 'small', top: 'small' }}
-				gap={'0.5rem'}
-			>
-				<Text weight={'bold'} overflow={'ellipsis'}>
-					{t('board.label.details', 'Details')}
-				</Text>
-				<Container
-					orientation={'horizontal'}
-					height={'fit'}
-					gap={'0.5rem'}
-					crossAlignment={'flex-start'}
-				>
-					<Input
-						label={t('board.input.title.label', 'Title*')}
-						backgroundColor={'gray5'}
-						borderColor={'gray3'}
-						value={titleValue}
-						onChange={onTitleChange}
-						hasError={titleValue.length > TASK_TITLE_MAX_LENGTH}
-						description={
-							titleValue.length > TASK_TITLE_MAX_LENGTH
-								? t(
-										'board.input.description.error.label',
-										'Maximum length allowed is 1024 characters'
-									)
-								: undefined
-						}
-					/>
-					<Select
-						items={priorityItems}
-						background={'gray5'}
-						label={t('board.select.priority.label', 'Priority')}
-						onChange={onPriorityChange}
-						selection={prioritySelection}
-						LabelFactory={CustomSelectLabelFactory}
-					/>
-				</Container>
-				<Switch
-					value={enableReminder}
-					onClick={onClickEnableReminder}
-					label={t('board.switch.enableReminder.label', 'Enable reminder')}
-				/>
+			</div>
+		</div>
 
-				{enableReminder && (
-					<DateTimePicker
-						width={'fill'}
-						label={t('board.dateTimePicker.reminder.label', 'Reminder')}
-						defaultValue={date || undefined}
-						includeTime={!isAllDay}
-						onChange={handleChange}
-						dateFormat={
-							isAllDay
-								? ALL_DAY_DATE_TIME_PICKER_DATE_FORMAT
-								: TIME_SPECIFIC_DATE_TIME_PICKER_DATE_FORMAT
-						}
-						hasError={date === null}
-						errorLabel={
-							date === null
-								? t(
-										'board.dateTimePicker.description.error.label',
-										'The reminder option is enabled, set date and time for it or disable the reminder'
-									)
-								: undefined
-						}
-					/>
-				)}
-				{enableReminder && (
-					<Checkbox
-						value={isAllDay}
-						onClick={onClickAllDayCheckbox}
-						label={t('board.checkbox.allDay.label', 'Remind me at every login throughout the day')}
-					/>
-				)}
-				<Text weight={'bold'}>{t('board.label.description', 'Description')}</Text>
-				<TextArea
-					borderColor={'gray3'}
-					label={t('board.textArea.taskDescription.label', 'Task Description')}
-					value={descriptionValue}
-					onChange={onChangeDescription}
-					hasError={descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH}
-					description={
-						descriptionValue.length > TASK_DESCRIPTION_MAX_LENGTH
-							? t(
-									'board.textArea.description.error.label',
-									'Maximum length allowed is 4096 characters'
-								)
-							: undefined
-					}
-				/>
-			</Container>
-		</Container>
+		// </Container>
 	);
 };

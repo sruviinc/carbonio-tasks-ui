@@ -21,12 +21,23 @@ import { useActions } from '../hooks/useActions';
 import { useReminder } from '../hooks/useReminder';
 
 import { Priority } from '../gql/types';
-import { Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { SruviPriorityIcon } from './SruviPriorityIcon';
+import {
+	HIGH_PRIORITY,
+	HIGH_PRIORITY_BG,
+	HIGH_PRIORITY_BORDER,
+	LOW_PRIORITY,
+	LOW_PRIORITY_BG,
+	LOW_PRIORITY_BORDER,
+	MEDIUM_PRIORITY,
+	MEDIUM_PRIORITY_BG,
+	MEDIUM_PRIORITY_BORDER
+} from '../sruvi/EditedColors';
 
 type ListItemContentProps = Pick<
 	Task,
-	'id' | 'priority' | 'reminderAt' | 'reminderAllDay' | 'title' | 'status'
+	'id' | 'priority' | 'reminderAt' | 'reminderAllDay' | 'title' | 'status' | 'description'
 > & {
 	visible?: boolean;
 	onClick?: (id: string) => void;
@@ -49,7 +60,8 @@ export const ListItemContent = React.memo<ListItemContentProps>(function ListIte
 	onClick,
 	status,
 	// others props
-	visible
+	visible,
+	description
 }) {
 	const [t] = useTranslation();
 	const { isExpired: isReminderExpired } = useReminder(reminderAt, reminderAllDay);
@@ -109,127 +121,244 @@ export const ListItemContent = React.memo<ListItemContentProps>(function ListIte
 	///////////sruvi/////////////
 
 	return (
-		<Container data-testid={id} height={LIST_ITEM_HEIGHT}>
-			<div style={{ width: '100%', height: '100%,display:flex' }}>
-				<div style={{ padding: '16px' }}>
-					{visible && (
-						<ContextualMenu actions={actions}>
-							<ListItemContainer
-								height={'fit'}
-								crossAlignment={'flex-end'}
-								onMouseDown={preventTextSelection}
-								onClick={clickHandler}
-								data-testid={'list-item-content'}
+		<Paper
+			variant="outlined"
+			style={{
+				borderRadius: '8px',
+				width: '100%',
+				height: '100%',
+
+				backgroundColor: high
+					? HIGH_PRIORITY_BG
+					: low
+						? LOW_PRIORITY_BG
+						: medium
+							? MEDIUM_PRIORITY_BG
+							: 'white'
+			}}
+		>
+			<div>
+				{visible && (
+					<ContextualMenu actions={actions}>
+						<ListItemContainer
+							height={'fill'}
+							crossAlignment={'flex-end'}
+							onMouseDown={preventTextSelection}
+							onClick={clickHandler}
+							data-testid={'list-item-content'}
+						>
+							<div
+								style={{ display: 'flex', width: '100%', height: '100%', flexDirection: 'column' }}
 							>
-								<HoverContainer
-									height={LIST_ITEM_HEIGHT}
-									wrap="nowrap"
-									mainAlignment="flex-start"
-									crossAlignment="center"
-									padding={{ all: 'small' }}
-									width="fill"
-									gap={'1rem'}
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										padding: '16px',
+
+										justifyContent: 'space-between'
+									}}
 								>
-									<ContentContainer
-										orientation="vertical"
-										height={'auto'}
-										maxHeight={'100%'}
-										gap={'0.25rem'}
-										width="fill"
-										mainAlignment={'flex-start'}
-									>
-										<Row gap={'0.25rem'} width="fill" wrap="nowrap">
-											<div style={{ width: '60%' }}>
-												{/* <Text overflow="ellipsis" size="medium">
-													{title}
-												</Text> */}
-												<Typography noWrap variant="body1" style={{ color: 'black', overflow: '' }}>
-													{title}
-												</Typography>
-											</div>
+									<Typography noWrap variant="body1" style={{ color: 'black' }}>
+										{title}
+									</Typography>
 
-											{status === Status.Complete ? (
-												<Container
-													margin={{ left: 'auto' }}
-													width={'fit'}
-													height={'fit'}
-													flexShrink={0}
-												>
-													<SruviPriorityIcon priority={priority} />
-												</Container>
-											) : (
-												<Container
-													margin={{ left: 'auto' }}
-													width={'fit'}
-													height={'fit'}
-													flexShrink={0}
-												>
-													<PriorityIcon priority={priority} />
-												</Container>
-											)}
-
-											{/* <Container
-												margin={{ left: 'auto' }}
-												width={'fit'}
-												height={'fit'}
-												flexShrink={0}
-											>
-												<PriorityIcon priority={priority} />
-											</Container> */}
-										</Row>
-										<Row
-											gap={'0.25rem'}
-											width="fill"
-											wrap="nowrap"
-											mainAlignment="space-between"
-											crossAlignment={'flex-start'}
+									{status === Status.Complete ? (
+										<Container
+											margin={{ left: 'auto' }}
+											width={'fit'}
+											height={'fit'}
+											flexShrink={0}
 										>
-											<Container
-												flexShrink={1}
-												flexGrow={1}
-												flexBasis="auto"
-												mainAlignment="flex-start"
-												orientation="horizontal"
-												minWidth={0}
-												width="auto"
-												height={'auto'}
-												wrap={'wrap-reverse'}
-												crossAlignment={'flex-start'}
-											>
-												{reminderAt ? (
-													<>
-														<Text size="small">
-															{t('tasksListItem.reminder.remindMeOn', 'Remind me on')}&nbsp;
-														</Text>
-														<Container
-															width={'fit'}
-															height={'fit'}
-															flexShrink={0}
-															maxWidth={'100%'}
-														>
-															<Reminder reminderAt={reminderAt} reminderAllDay={reminderAllDay} />
-														</Container>
-													</>
-												) : (
-													<Text color="secondary" size="small">
-														{missingReminderLabel}
-													</Text>
+											<SruviPriorityIcon priority={priority} />
+										</Container>
+									) : (
+										<Container
+											margin={{ left: 'auto' }}
+											width={'fit'}
+											height={'fit'}
+											flexShrink={0}
+										>
+											<PriorityIcon priority={priority} />
+										</Container>
+									)}
+								</div>
+								<div>
+									<Typography noWrap variant="body2">
+										{description}
+									</Typography>
+								</div>
+								<div style={{ padding: '16px' }}>
+									{reminderAt ? (
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'flex-start',
+												width: '100'
+											}}
+										>
+											<Text size="small">
+												{t('tasksListItem.reminder.remindMeOn', 'Remind me on')}&nbsp;
+											</Text>
+											<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+												<div style={{ marginRight: '8px' }}>
+													<Reminder reminderAt={reminderAt} reminderAllDay={reminderAllDay} />
+												</div>
+
+												{isReminderExpired && (
+													<ReminderIconContainer width={'fit'} flexShrink={0}>
+														<Icon icon="AlertTriangle" color="warning" />
+													</ReminderIconContainer>
 												)}
-											</Container>
-											{isReminderExpired && (
-												<ReminderIconContainer width={'fit'} flexShrink={0}>
-													<Icon icon="AlertTriangle" color="warning" />
-												</ReminderIconContainer>
-											)}
-										</Row>
-									</ContentContainer>
-								</HoverContainer>
+											</div>
+										</div>
+									) : (
+										<Text color="secondary" size="small">
+											{missingReminderLabel}
+										</Text>
+									)}
+								</div>
+							</div>
+							<div
+								style={{
+									marginBottom: '8px',
+									marginTop: '8px',
+									display: 'flex',
+									justifyContent: 'flex-end',
+									flexDirection: 'column'
+								}}
+							>
 								<ListItemHoverBar actions={actions} />
-							</ListItemContainer>
-						</ContextualMenu>
-					)}
-				</div>
+							</div>
+						</ListItemContainer>
+					</ContextualMenu>
+				)}
 			</div>
-		</Container>
+		</Paper>
+
+		// <div style={{ width: '100%', height: '100%', aspectRatio: '1/1' }}>
+		// 	<div style={{ width: '100%', height: '100%,display:flex' }}>
+		// 		<div style={{ padding: '16px' }}>
+		// 			{visible && (
+		// 				<ContextualMenu actions={actions}>
+		// 					<ListItemContainer
+		// 						height={'fit'}
+		// 						crossAlignment={'flex-end'}
+		// 						onMouseDown={preventTextSelection}
+		// 						onClick={clickHandler}
+		// 						data-testid={'list-item-content'}
+		// 					>
+		// 						<HoverContainer
+		// 							height={LIST_ITEM_HEIGHT}
+		// 							wrap="nowrap"
+		// 							mainAlignment="flex-start"
+		// 							crossAlignment="center"
+		// 							padding={{ all: 'small' }}
+		// 							width="fill"
+		// 							gap={'1rem'}
+		// 						>
+		// 							<ContentContainer
+		// 								orientation="vertical"
+		// 								height={'auto'}
+		// 								maxHeight={'100%'}
+		// 								gap={'0.25rem'}
+		// 								width="fill"
+		// 								mainAlignment={'flex-start'}
+		// 							>
+		// 								<Row gap={'0.25rem'} width="fill" wrap="nowrap">
+		// 									<div style={{ width: '60%' }}>
+		// 										{/* <Text overflow="ellipsis" size="medium">
+		// 											{title}
+		// 										</Text> */}
+		// 										<Typography noWrap variant="body1" style={{ color: 'black', overflow: '' }}>
+		// 											{title}
+		// 										</Typography>
+		// 									</div>
+
+		// 									{status === Status.Complete ? (
+		// 										<Container
+		// 											margin={{ left: 'auto' }}
+		// 											width={'fit'}
+		// 											height={'fit'}
+		// 											flexShrink={0}
+		// 										>
+		// 											<SruviPriorityIcon priority={priority} />
+		// 										</Container>
+		// 									) : (
+		// 										<Container
+		// 											margin={{ left: 'auto' }}
+		// 											width={'fit'}
+		// 											height={'fit'}
+		// 											flexShrink={0}
+		// 										>
+		// 											<PriorityIcon priority={priority} />
+		// 										</Container>
+		// 									)}
+
+		// 									{/* <Container
+		// 										margin={{ left: 'auto' }}
+		// 										width={'fit'}
+		// 										height={'fit'}
+		// 										flexShrink={0}
+		// 									>
+		// 										<PriorityIcon priority={priority} />
+		// 									</Container> */}
+		// 								</Row>
+		// 								<Row
+		// 									gap={'0.25rem'}
+		// 									width="fill"
+		// 									wrap="nowrap"
+		// 									mainAlignment="space-between"
+		// 									crossAlignment={'flex-start'}
+		// 								>
+		// 									<Container
+		// 										flexShrink={1}
+		// 										flexGrow={1}
+		// 										flexBasis="auto"
+		// 										mainAlignment="flex-start"
+		// 										orientation="horizontal"
+		// 										minWidth={0}
+		// 										width="auto"
+		// 										height={'auto'}
+		// 										wrap={'wrap-reverse'}
+		// 										crossAlignment={'flex-start'}
+		// 									>
+		// 										{reminderAt ? (
+		// 											<>
+		// 												<Text size="small">
+		// 													{t('tasksListItem.reminder.remindMeOn', 'Remind me on')}&nbsp;
+		// 												</Text>
+		// 												<Container
+		// 													width={'fit'}
+		// 													height={'fit'}
+		// 													flexShrink={0}
+		// 													maxWidth={'100%'}
+		// 												>
+		// 													<Reminder reminderAt={reminderAt} reminderAllDay={reminderAllDay} />
+		// 												</Container>
+		// 											</>
+		// 										) : (
+		// 											<Text color="secondary" size="small">
+		// 												{missingReminderLabel}
+		// 											</Text>
+		// 										)}
+		// 									</Container>
+		// 									{isReminderExpired && (
+		// 										<ReminderIconContainer width={'fit'} flexShrink={0}>
+		// 											<Icon icon="AlertTriangle" color="warning" />
+		// 										</ReminderIconContainer>
+		// 									)}
+		// 								</Row>
+		// 							</ContentContainer>
+		// 						</HoverContainer>
+		// 						<ListItemHoverBar actions={actions} />
+		// 					</ListItemContainer>
+		// 				</ContextualMenu>
+		// 			)}
+		// 		</div>
+		// 	</div>
+		// </div>
 	);
 });

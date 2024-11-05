@@ -17,6 +17,7 @@ import {
 } from '@zextras/carbonio-shell-ui';
 import { useTranslation } from 'react-i18next';
 import { Route } from 'react-router-dom';
+import './styles.less';
 
 import { RemindersManager } from './components/RemindersManager';
 import { TASKS_APP_ID, TASKS_ROUTE } from './constants';

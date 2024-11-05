@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useQuery } from '@apollo/client';
 import { Container, Responsive } from '@zextras/carbonio-design-system';
@@ -17,6 +17,10 @@ import { ListContext } from '../../contexts';
 import { FindTasksDocument, type FindTasksQuery } from '../../gql/types';
 import type { NonNullableList } from '../../types/utils';
 import { identity } from '../../utils';
+import { Divider, Grid2 } from '@mui/material';
+import { useActiveItem } from '../../hooks/useActiveItem';
+import type { Task } from '../../gql/types';
+import { useActions } from '../../hooks/useActions';
 
 export const TasksView = (): React.JSX.Element => {
 	const { data: findTasksResult } = useQuery(FindTasksDocument, {
@@ -31,34 +35,41 @@ export const TasksView = (): React.JSX.Element => {
 		return [];
 	}, [findTasksResult]);
 
+	const { activeItem } = useActiveItem();
+
+	const [backbutton, setBackbutton] = useState(false);
+	useEffect(() => {
+		if (activeItem) {
+			setBackbutton(true);
+		} else {
+			setBackbutton(false);
+		}
+	});
 	return (
 		<ListContext.Provider value={{ isFull: tasks.length >= 200 }}>
-			<Container
-				orientation="row"
-				crossAlignment="flex-start"
-				mainAlignment="flex-start"
-				width="fill"
-				height="fill"
-				background="gray5"
-				borderRadius="none"
-				maxHeight="100%"
+			<Grid2
+				container
+				sx={{
+					height: '100%',
+					width: '100%',
+					overflowY: 'scroll',
+					msOverflowStyle: 'none',
+					scrollbarWidth: 'none',
+					'&::-webkit-scrollbar': {
+						width: 0
+					},
+					borderTopRightRadius: 16,
+					borderTopLeftRadius: 16
+				}}
 			>
-				<Responsive mode="desktop">
-					<TaskList tasks={tasks} />
-					<Container
-						width={DISPLAYER_WIDTH}
-						mainAlignment="flex-start"
-						crossAlignment="flex-start"
-						borderRadius="none"
-						style={{ maxHeight: '100%' }}
-					>
-						<Displayer translationKey="displayer.allTasks" />
-					</Container>
-				</Responsive>
-				<Responsive mode="mobile">
-					<TaskList tasks={tasks} />
-				</Responsive>
-			</Container>
+				<Grid2 size={12} sx={{ borderTopRightRadius: 16, borderTopLeftRadius: 16 }}>
+					{!backbutton ? (
+						<TaskList tasks={tasks} />
+					) : (
+						<Displayer translationKey="displayer.allTasks" hello={setBackbutton} />
+					)}
+				</Grid2>
+			</Grid2>
 		</ListContext.Provider>
 	);
 };

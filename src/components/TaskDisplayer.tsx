@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Container } from '@zextras/carbonio-design-system';
 
@@ -12,87 +12,39 @@ import { DisplayerHeader } from './DisplayerHeader';
 import { TaskDetails } from './TaskDetails';
 import type { Task } from '../gql/types';
 import { useActions } from '../hooks/useActions';
+import { BACKGROUND_COLOR } from '../sruvi/EditedColors';
 
 interface TaskDisplayerProps {
 	task: Task;
+	hello: (value: boolean) => void;
 }
 
-export const TaskDisplayer = ({ task }: TaskDisplayerProps): React.JSX.Element => {
+export const TaskDisplayer = ({ task, hello }: TaskDisplayerProps): React.JSX.Element => {
 	const actions = useActions(task);
-	return (
-		// <Container background={'gray5'} padding={{ bottom: '1rem' }}>
-		// 	<DisplayerHeader title={task.title} status={task.status} />
-		// 	<Container
-		// 		padding={{ horizontal: '1rem' }}
-		// 		mainAlignment={'flex-start'}
-		// 		minHeight={0}
-		// 		maxHeight={'100%'}
-		// 	>
-		// 		<ActionsHeader actions={actions} />
-		// 		<TaskDetails
-		// 			createdAt={task.createdAt}
-		// 			priority={task.priority}
-		// 			reminderAt={task.reminderAt}
-		// 			reminderAllDay={task.reminderAllDay}
-		// 			description={task.description}
-		// 		/>
-		// 	</Container>
-		// </Container>
 
+	return (
 		<div
 			style={{
-				width: '100%',
 				height: '100%',
-				backgroundColor: '#F5F6F8',
+				width: '100%',
 				display: 'flex',
-				overflowY: 'hidden'
+				flexDirection: 'column',
+				background: BACKGROUND_COLOR
 			}}
 		>
-			<div
-				style={{
-					display: 'flex',
-					height: '100%',
-					flexDirection: 'column',
-					width: '100%',
-					overflowY: 'hidden'
-				}}
-			>
-				<div style={{ padding: '40px', height: '100%', overflowY: 'hidden' }}>
-					<div
-						style={{
-							width: '100%',
-							height: '100%',
-							backgroundColor: 'white',
-							overflowY: 'hidden',
-							borderRadius: '16px',
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'space-between'
-						}}
-					>
-						<div>
-							<DisplayerHeader title={task.title} status={task.status} />
-
-							<TaskDetails
-								createdAt={task.createdAt}
-								priority={task.priority}
-								reminderAt={task.reminderAt}
-								reminderAllDay={task.reminderAllDay}
-								description={task.description}
-							/>
-						</div>
-						<div>
-							<ActionsHeader actions={actions} />
-						</div>
-					</div>
-
-					<Container
-						padding={{ horizontal: '1rem' }}
-						mainAlignment={'flex-start'}
-						minHeight={0}
-						maxHeight={'100%'}
-					></Container>
-				</div>
+			<div style={{ width: '100%' }}>
+				<DisplayerHeader title={task.title} status={task.status} hello={hello} />
+			</div>
+			<div>
+				<TaskDetails
+					title={task.title}
+					createdAt={task.createdAt}
+					priority={task.priority}
+					reminderAt={task.reminderAt}
+					reminderAllDay={task.reminderAllDay}
+					description={task.description}
+				/>
+				<ActionsHeader actions={actions} />
 			</div>
 		</div>
 	);

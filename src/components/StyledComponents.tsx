@@ -10,7 +10,7 @@ import styled from 'styled-components';
 export const HoverContainer = styled(Row)``;
 
 export const HoverBarContainer = styled(Row)`
-	display: none;
+	display: flex;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -21,7 +21,7 @@ export const ListItemContainer = styled(Container)`
 	position: relative;
 	cursor: pointer;
 	${HoverBarContainer} {
-		display: none;
+		display: flex;
 	}
 
 	&:hover {

@@ -33,16 +33,19 @@ export const ListItemHoverBar = ({
 	);
 
 	return (
-		<HoverBarContainer
-			wrap="nowrap"
-			mainAlignment="flex-end"
-			data-testid="hover-bar"
-			padding={{ top: '0.25rem', right: '0.5rem' }}
-			width={'100%'}
-			height={'fit'}
-			{...rest}
-		>
+		// <HoverBarContainer
+		// 	wrap="nowrap"
+		// 	mainAlignment="flex-end"
+		// 	data-testid="hover-bar"
+		// 	padding={{ top: '0.25rem', right: '0.5rem' }}
+		// 	width={'100%'}
+		// 	height={'fit'}
+		// 	{...rest}
+		// >
+		<div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end' }} {...rest}>
 			<CollapsingActions actions={actionsMapped} color={'text'} size={'medium'} gap={'0.25rem'} />
-		</HoverBarContainer>
+		</div>
+
+		// </HoverBarContainer>
 	);
 };

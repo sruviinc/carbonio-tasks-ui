@@ -16,9 +16,10 @@ import { useActiveItem } from '../hooks/useActiveItem';
 
 export interface DisplayerProps {
 	translationKey: string;
+	hello: (value: boolean) => void;
 }
 
-export const Displayer = ({ translationKey }: DisplayerProps): React.JSX.Element => {
+export const Displayer = ({ translationKey, hello }: DisplayerProps): React.JSX.Element => {
 	const { activeItem } = useActiveItem();
 	const { data } = useQuery(GetTaskDocument, {
 		variables: {
@@ -43,7 +44,11 @@ export const Displayer = ({ translationKey }: DisplayerProps): React.JSX.Element
 			crossAlignment="flex-start"
 			data-testid="displayer"
 		>
-			{task ? <TaskDisplayer task={task} /> : <EmptyDisplayer translationKey={translationKey} />}
+			{task ? (
+				<TaskDisplayer task={task} hello={hello} />
+			) : (
+				<EmptyDisplayer translationKey={translationKey} />
+			)}
 		</Container>
 	);
 };
